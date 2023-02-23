@@ -1,7 +1,8 @@
-package repository
+package mongo_repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,5 +19,11 @@ func ConnectMongo(uri string) (*mongo.Database, error) {
 	if err := client.Connect(ctx); err != nil {
 		return nil, err
 	}
+	fmt.Println("Connect to MongoDB")
 	return client.Database("test"), nil
+}
+
+func GetCollection(client *mongo.Database, collectionName string) *mongo.Collection {
+	collection := client.Collection(collectionName)
+	return collection
 }

@@ -1,7 +1,12 @@
 package routes
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"web_Blogs/api/handler"
 
-func UserRouter(app fiber.Router) {
-	app.Get("/Login")
+	"github.com/gofiber/fiber/v2"
+)
+
+func UserRouter(app fiber.Router, handler handler.UserHandler) {
+	users := app.Group("/users")
+	users.Post("/register", handler.CreateUser)
 }
