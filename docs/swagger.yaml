@@ -1,0 +1,19 @@
+info:
+  contact: {}
+paths:
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Use for registry
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Create new User
+      tags:
+      - Users
+swagger: "2.0"

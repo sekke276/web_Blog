@@ -15,6 +15,15 @@ func NewUserHandler(usecase user.UserUsecase) *UserHandler {
 	return &UserHandler{usecase: usecase}
 }
 
+// @CreateUser godoc
+// @Summary Create new User
+// @Description Use for registry
+// @Tags Users
+// @Accept json
+// @Success 200
+// @Failure 404
+// @Failure 500
+// @Router /register [post]
 func (hanlder *UserHandler) CreateUser(c *fiber.Ctx) error {
 	type createUserRequest struct {
 		Username  string    `json:"username"`
