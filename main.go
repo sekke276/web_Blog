@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	// "web_Blogs/api/auth"
 	"web_Blogs/api/configs"
 	"web_Blogs/api/handler"
 	"web_Blogs/api/mongo_repository"
@@ -18,11 +19,11 @@ import (
 )
 
 func main() {
-	cfg, err := configs.EnvMongoURI()
+	cfg, err := configs.LoadConfig()
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
-	db, err := mongo_repository.ConnectMongo(cfg.MongoURI)
+	db, err := mongo_repository.ConnectMongo(cfg.MongoURI, cfg.MongoDB)
 	if err != nil {
 		log.Fatalf("Failed to connect to mongo db")
 	}
@@ -42,11 +43,14 @@ func main() {
 		return c.SendFile("./docs/swagger.json")
 	})
 
-	api := app.Group("/v1")
+	api := app.Group("/api")
+	v1 := api.Group("/v1")
 	userRepo := mongo_repository.NewUserMongoRepository(db)
 	userUC := user.NewUserUseCase(userRepo)
-	userHandler := handler.NewUserHandler(userUC)
-	routes.UserRouter(api, *userHandler)
+	userHandler := handler.NewUserHandler(userUC, cfg.AuthConfig.JWTSecret, cfg.AuthConfig.JWTExpiration)
+	// authHandler := auth.NewJWTMiddleware(cfg.AuthConfig.JWTSecret)
+	v1.Post("/login", userHandler.Authentication)
+	routes.UserRouter(v1, *userHandler)
 	port := fmt.Sprintf(":%v", cfg.Port)
 	app.Listen(port)
 	log.Printf("Server started on port %v", cfg.Port)

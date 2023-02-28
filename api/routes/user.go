@@ -8,5 +8,6 @@ import (
 
 func UserRouter(app fiber.Router, handler handler.UserHandler) {
 	users := app.Group("/users")
+
 	users.Post("/register", handler.CreateUser)
 }

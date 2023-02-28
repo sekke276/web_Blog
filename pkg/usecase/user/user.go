@@ -1,15 +1,17 @@
 package user
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"time"
 	"web_Blogs/pkg/entities"
 	"web_Blogs/pkg/repository"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserUsecase interface {
 	GetUserById(id string) (*entities.User, error)
 	CreateUser(password, username, gender, facebook, avatar string, bdate time.Time) error
+	GetUserByUsername(username string) (*entities.User, error)
 }
 
 type userUsecase struct {
@@ -21,11 +23,11 @@ func NewUserUseCase(repo repository.UserRepository) UserUsecase {
 }
 
 func (u *userUsecase) CreateUser(password, username, gender, facebook, avatar string, bdate time.Time) error {
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		return err
 	}
-	user := &entities.User{
+	user := &entities.UserRequest{
 		Username:  username,
 		Password:  string(hashPassword),
 		Gender:    gender,
@@ -38,4 +40,8 @@ func (u *userUsecase) CreateUser(password, username, gender, facebook, avatar st
 
 func (u *userUsecase) GetUserById(id string) (*entities.User, error) {
 	return u.repo.FindUserByID(id)
+}
+
+func (u *userUsecase) GetUserByUsername(username string) (*entities.User, error) {
+	return u.repo.GetUserByUsername(username)
 }

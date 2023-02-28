@@ -28,9 +28,9 @@ func (r *UserRepositoryMongo) FindUserByID(id string) (*entities.User, error) {
 	}
 	ctx := context.Background()
 	var user entities.User
-	err = r.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(user)
+	err = r.collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&user)
 	if err == mongo.ErrNoDocuments {
-		return nil, nil
+		return nil, err
 	}
 	if err != nil {
 		return nil, err
@@ -38,13 +38,13 @@ func (r *UserRepositoryMongo) FindUserByID(id string) (*entities.User, error) {
 	return &user, nil
 }
 
-func (r *UserRepositoryMongo) Create(user *entities.User) error {
+func (r *UserRepositoryMongo) Create(user *entities.UserRequest) error {
 	ctx := context.Background()
 	_, err := r.collection.InsertOne(ctx, user)
 	return err
 }
 
-func (r *UserRepositoryMongo) GetUserByUserName(username string) (*entities.User, error) {
+func (r *UserRepositoryMongo) GetUserByUsername(username string) (*entities.User, error) {
 	ctx := context.Background()
 	var user entities.User
 	err := r.collection.FindOne(ctx, bson.M{"username": username}).Decode(&user)
