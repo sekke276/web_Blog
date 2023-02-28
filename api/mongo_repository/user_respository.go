@@ -49,7 +49,7 @@ func (r *UserRepositoryMongo) GetUserByUsername(username string) (*entities.User
 	var user entities.User
 	err := r.collection.FindOne(ctx, bson.M{"username": username}).Decode(&user)
 	if err == mongo.ErrNoDocuments {
-		return nil, nil
+		return nil, err
 	}
 	if err != nil {
 		return nil, err

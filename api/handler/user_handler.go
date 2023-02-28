@@ -41,7 +41,9 @@ func (handler *UserHandler) CreateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid request body")
 	}
-
+	if _, err := handler.usecase.GetUserByUsername(req.Username); err == nil {
+		return fiber.NewError(fiber.StatusConflict, "username already existed")
+	}
 	err := handler.usecase.CreateUser(req.Password, req.Username, req.Gender, req.Facebook, req.Avatar, req.Birthdate)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "failed to create New user")
